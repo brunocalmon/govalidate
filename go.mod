@@ -1,3 +1,2 @@
-module github.com/brunocalmon/go-request-validate
-
+module github.com/brunocalmon/govalidate
 go 1.14
