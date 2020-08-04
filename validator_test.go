@@ -39,13 +39,13 @@ func TestBodyRequest(t *testing.T) {
 		{"TestBodyRequestStringRequiredFailingWithEmptyString", args{d: RequestString{A: "", B: ""}}, true},
 		{"TestBodyRequestStringRequiredFailingWithNoField", args{d: RequestString{B: ""}}, true},
 
-		{"TestBodyRequestStringRequiredSuccess", args{d: RequestPassword{A: "P@ssw0rdStrong", B: ""}}, false},
-		{"TestBodyRequestStringRequiredSuccess", args{d: RequestPassword{A: "week", B: ""}}, true},
-		{"TestBodyRequestStringRequiredSuccess", args{d: RequestPassword{A: "nouppercase!1", B: ""}}, true},
-		{"TestBodyRequestStringRequiredSuccess", args{d: RequestPassword{A: "NOLOWERCASE!1", B: ""}}, true},
-		{"TestBodyRequestStringRequiredSuccess", args{d: RequestPassword{A: "Nospecial1", B: ""}}, true},
-		{"TestBodyRequestStringRequiredSuccess", args{d: RequestPassword{A: "Nonumber@", B: ""}}, true},
-		{"TestBodyRequestStringRequiredSuccess", args{d: RequestPassword{A: "P@ssw0rdtolongtofitonthevalidation", B: ""}}, true},
+		{"TestBodyRequestPasswordSuccess", args{d: RequestPassword{A: "P@ssw0rdStrong", B: ""}}, false},
+		{"TestBodyRequestPasswordLowerThan8", args{d: RequestPassword{A: "week", B: ""}}, true},
+		{"TestBodyRequestPasswordWithoutAtLeastOneUppercase", args{d: RequestPassword{A: "nouppercase!1", B: ""}}, true},
+		{"TestBodyRequestPasswordWithoutAtLeastOneLowercase", args{d: RequestPassword{A: "NOLOWERCASE!1", B: ""}}, true},
+		{"TestBodyRequestPasswordWithoutAtLeastOneSpecialChar", args{d: RequestPassword{A: "Nospecial1", B: ""}}, true},
+		{"TestBodyRequestPasswordWithoutAtLeastOneDigit", args{d: RequestPassword{A: "Nonumber@", B: ""}}, true},
+		{"TestBodyRequestPasswordWithMoreThan20", args{d: RequestPassword{A: "P@ssw0rdtolongtofitonthevalidation", B: ""}}, true},
 
 		{"TestBodyRequestObjectRequiredSuccess", args{d: RequestObject{Embedded{}}}, false},
 
