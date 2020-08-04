@@ -18,11 +18,7 @@ func main() {
   
   fieldErrors := govalidate.BodyRequest(request)
 	if fieldErrors != nil {
-		return &domainError.ErrorResponse{
-			Status:  http.StatusBadRequest,
-			Message: "invalid body fields",
-			InError: fieldErrors,
-		}
+		...
 	}
 }
 ```
