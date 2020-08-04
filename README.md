@@ -16,7 +16,7 @@ type MyRequest struct {
 func main() {
   request := MyRequest{"123", "test@mail.com", "StrongP@ssw0rd", 20}
   
-  fieldErrors := govalidate.BodyRequest(d)
+  fieldErrors := govalidate.BodyRequest(request)
 	if fieldErrors != nil {
 		return &domainError.ErrorResponse{
 			Status:  http.StatusBadRequest,
