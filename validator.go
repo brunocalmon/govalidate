@@ -155,23 +155,25 @@ func BodyRequest(d interface{}) []string {
 }
 
 func validateMinMaxLength(condition string, val interface{}) error {
-	if strings.Contains(condition, "min=") || strings.Contains(condition, "max=") {
-		constraints := strings.Split(condition, "=")
-		fieldVal, ok := val.(string)
+	if val != "" {
+		if strings.Contains(condition, "min=") || strings.Contains(condition, "max=") {
+			constraints := strings.Split(condition, "=")
+			fieldVal, ok := val.(string)
 
-		offset, atoiErr := strconv.Atoi(constraints[1])
-		if len(constraints) < 2 || !ok || atoiErr != nil {
-			return errors.New("field [%s] validations malformed")
-		}
-
-		if constraints[0] == "min" {
-			if len(fieldVal) < offset {
-				return errors.New(fmt.Sprintf("the field [%s] value [%s] has length shorter than required [%d]", "%s", fieldVal, offset))
+			offset, atoiErr := strconv.Atoi(constraints[1])
+			if len(constraints) < 2 || !ok || atoiErr != nil {
+				return errors.New("field [%s] validations malformed")
 			}
-		}
-		if constraints[0] == "max" {
-			if len(fieldVal) > offset {
-				return errors.New(fmt.Sprintf("the field [%s] value [%s] has length higher than required [%d]", "%s", fieldVal, offset))
+
+			if constraints[0] == "min" {
+				if len(fieldVal) < offset {
+					return errors.New(fmt.Sprintf("the field [%s] value [%s] has length shorter than required [%d]", "%s", fieldVal, offset))
+				}
+			}
+			if constraints[0] == "max" {
+				if len(fieldVal) > offset {
+					return errors.New(fmt.Sprintf("the field [%s] value [%s] has length higher than required [%d]", "%s", fieldVal, offset))
+				}
 			}
 		}
 	}

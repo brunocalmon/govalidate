@@ -18,6 +18,12 @@ func TestBodyRequest(t *testing.T) {
 		A string `validate:"required"`
 		B string
 	}
+
+	type RequestStringLength struct {
+		A string `validate:"min=11,max=12"`
+		B string
+	}
+
 	type RequestPassword struct {
 		A string `validate:"password"`
 		B string
@@ -38,6 +44,11 @@ func TestBodyRequest(t *testing.T) {
 		{"TestBodyRequestStringRequiredSuccess", args{d: RequestString{A: "test", B: ""}}, false},
 		{"TestBodyRequestStringRequiredFailingWithEmptyString", args{d: RequestString{A: "", B: ""}}, true},
 		{"TestBodyRequestStringRequiredFailingWithNoField", args{d: RequestString{B: ""}}, true},
+
+		{"TestBodyRequestStringLengthInRange", args{d: RequestStringLength{A: "test_success", B: ""}}, false},
+		{"TestBodyRequestStringLengthOutOfMaxRange", args{d: RequestStringLength{A: "test_not_success_too_long", B: ""}}, true},
+		{"TestBodyRequestStringLengthOutOfMinRange", args{d: RequestStringLength{A: "test_short", B: ""}}, true},
+		{"TestBodyRequestStringLengthWithoutValue", args{d: RequestStringLength{A: "", B: ""}}, false},
 
 		{"TestBodyRequestPasswordSuccess", args{d: RequestPassword{A: "P@ssw0rdStrong", B: ""}}, false},
 		{"TestBodyRequestPasswordLowerThan8", args{d: RequestPassword{A: "week", B: ""}}, true},
