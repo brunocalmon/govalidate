@@ -52,10 +52,15 @@ func TestBodyRequest(t *testing.T) {
 
 		{"TestBodyRequestPasswordSuccess", args{d: RequestPassword{A: "P@ssw0rdStrong", B: ""}}, false},
 		{"TestBodyRequestPasswordLowerThan8", args{d: RequestPassword{A: "week", B: ""}}, true},
-		{"TestBodyRequestPasswordWithoutAtLeastOneUppercase", args{d: RequestPassword{A: "nouppercase!1", B: ""}}, true},
-		{"TestBodyRequestPasswordWithoutAtLeastOneLowercase", args{d: RequestPassword{A: "NOLOWERCASE!1", B: ""}}, true},
-		{"TestBodyRequestPasswordWithoutAtLeastOneSpecialChar", args{d: RequestPassword{A: "Nospecial1", B: ""}}, true},
-		{"TestBodyRequestPasswordWithoutAtLeastOneDigit", args{d: RequestPassword{A: "Nonumber@", B: ""}}, true},
+		{"TestBodyRequestPasswordWithoutAtLeastOneUppercase", args{d: RequestPassword{A: "nouppercase!1", B: ""}}, false},
+		{"TestBodyRequestPasswordWithoutAtLeastOneLowercase", args{d: RequestPassword{A: "NOLOWERCASE!1", B: ""}}, false},
+		{"TestBodyRequestPasswordWithoutAtLeastOneSpecialChar", args{d: RequestPassword{A: "Nospecial1", B: ""}}, false},
+		{"TestBodyRequestPasswordWithoutAtLeastOneDigit", args{d: RequestPassword{A: "Nonumber@", B: ""}}, false},
+		{"TestBodyRequestPasswordContainingOnlyStars", args{d: RequestPassword{A: "***************", B: ""}}, true},
+
+		{"TestBodyRequestPasswordWithoutAtLeast3of4Requirement_NoUppercase_Lowercase", args{d: RequestPassword{A: "!0125583939193948_", B: ""}}, true},
+		{"TestBodyRequestPasswordWithoutAtLeast3of4Requirement_NoDigit_Special", args{d: RequestPassword{A: "Password", B: ""}}, true},
+
 		{"TestBodyRequestPasswordWithMoreThan72", args{d: RequestPassword{A: "P@ssw0rdtolongtofitonthevalidationP@ssw0rdtolongtofitonthevalidationP@ssw0rdtolongtofitonthevalidation", B: ""}}, true},
 		{"TestBodyRequestPasswordWithNoASCIICharacter", args{d: RequestPassword{A: "P@ssw0rdß", B: ""}}, true},
 

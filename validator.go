@@ -233,5 +233,5 @@ func passwordMinimumReq(hasSpecial, hasDigit, hasUppercase, hasLowercase bool) b
 	if hasLowercase {
 		counter++
 	}
-	return counter > 3
+	return counter >= 3
 }
