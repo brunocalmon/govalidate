@@ -15,7 +15,7 @@ func TestBodyRequest(t *testing.T) {
 		A int `validate:"max=6"`
 	}
 	type RequestString struct {
-		A string `validate:"required"`
+		A string `validate:" required"`
 		B string
 	}
 
@@ -56,7 +56,8 @@ func TestBodyRequest(t *testing.T) {
 		{"TestBodyRequestPasswordWithoutAtLeastOneLowercase", args{d: RequestPassword{A: "NOLOWERCASE!1", B: ""}}, true},
 		{"TestBodyRequestPasswordWithoutAtLeastOneSpecialChar", args{d: RequestPassword{A: "Nospecial1", B: ""}}, true},
 		{"TestBodyRequestPasswordWithoutAtLeastOneDigit", args{d: RequestPassword{A: "Nonumber@", B: ""}}, true},
-		{"TestBodyRequestPasswordWithMoreThan20", args{d: RequestPassword{A: "P@ssw0rdtolongtofitonthevalidation", B: ""}}, true},
+		{"TestBodyRequestPasswordWithMoreThan72", args{d: RequestPassword{A: "P@ssw0rdtolongtofitonthevalidationP@ssw0rdtolongtofitonthevalidationP@ssw0rdtolongtofitonthevalidation", B: ""}}, true},
+		{"TestBodyRequestPasswordWithNoASCIICharacter", args{d: RequestPassword{A: "P@ssw0rdß", B: ""}}, true},
 
 		{"TestBodyRequestObjectRequiredSuccess", args{d: RequestObject{Embedded{}}}, false},
 

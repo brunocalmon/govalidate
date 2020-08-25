@@ -14,6 +14,8 @@ const (
 	emailRegex       = "^(([^<>()\\[\\]\\.,;:\\s@\\\"]+(\\.[^<>()\\[\\]\\.,;:\\s@\\\"]+)*)|(\\\".+\\\"))@(([^<>()[\\]\\.,;:\\s@\\\"]+\\.)+[^<>()[\\]\\.,;:\\s@\\\"]{2,})$" // email pattern
 	dateOfBirthRegex = "^(0[1-9]|[12][0-9]|3[01])[\\.](0[1-9]|1[012])[\\.](19|20)\\d\\d$"                                                                                  // german date pattern
 
+	notASCII          = "([^\\x00-\\x7F]+)"  // has not ASCII char
+	hasASCII          = "([\\x00-\\x7F]+)"   // has ASCII char
 	specialCharacters = "(.*[^A-Za-z0-9].*)" // has special char
 	upperCase         = "(.*[A-Z].*)"        // has uppercase char
 	lowerCase         = "(.*[a-z].*)"        // has lowercase char
@@ -43,7 +45,7 @@ func (v defaultValidator) validate(conditions []string, val interface{}) error {
 
 func (v stringValidator) validate(conditions []string, val interface{}) error {
 	for _, condition := range conditions {
-		switch condition {
+		switch strings.TrimSpace(condition) {
 		case "required":
 			if val == "" {
 				return errors.New("field [%s] is required, but is missing")
@@ -181,6 +183,14 @@ func validateMinMaxLength(condition string, val interface{}) error {
 }
 
 func PasswordValidator(password string) (bool, error) {
+	hasASCII, errASCII := regexp.MatchString(hasASCII, password)
+	if errASCII != nil {
+		return false, errASCII
+	}
+	notASCII, errNotASCII := regexp.MatchString(notASCII, password)
+	if errASCII != nil {
+		return false, errNotASCII
+	}
 	hasSpecial, errSpecial := regexp.MatchString(specialCharacters, password)
 	if errSpecial != nil {
 		return false, errSpecial
@@ -201,8 +211,27 @@ func PasswordValidator(password string) (bool, error) {
 	if errWhitespace != nil {
 		return false, errWhitespace
 	}
-	hasCorrectSize := len(password) >= 8 && len(password) <= 20
+	hasCorrectSize := len(password) >= 8 && len(password) <= 72
+
+	minimumReq := passwordMinimumReq(hasSpecial, hasDigit, hasUppercase, hasLowercase)
 
 	log.Printf("Password validation:\n special: [%t]\n digit: [%t]\n uppercase: [%t]\n lowercase: [%t]\n correct size: [%t]\n", hasSpecial, hasDigit, hasUppercase, hasLowercase, hasCorrectSize)
-	return hasSpecial && hasDigit && hasUppercase && hasLowercase && hasCorrectSize && !hasWhitespace, nil
+	return hasASCII && !notASCII && !hasWhitespace && hasCorrectSize && minimumReq, nil
+}
+
+func passwordMinimumReq(hasSpecial, hasDigit, hasUppercase, hasLowercase bool) bool {
+	counter := 0
+	if hasSpecial {
+		counter++
+	}
+	if hasDigit {
+		counter++
+	}
+	if hasUppercase {
+		counter++
+	}
+	if hasLowercase {
+		counter++
+	}
+	return counter > 3
 }
