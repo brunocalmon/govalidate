@@ -62,7 +62,7 @@ func (v stringValidator) validate(conditions []string, val interface{}) error {
 				password := val.(string)
 				matched, err := PasswordValidator(password)
 				if !matched || err != nil {
-					return errors.New("field [%s] should be a valid password between 8 to 20 characters which contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character")
+					return errors.New("field [%s] should be a valid password between 8 to 72 characters which contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character")
 				}
 			}
 		case "gender":
