@@ -49,6 +49,7 @@ func TestBodyRequest(t *testing.T) {
 		{"TestBodyRequestStringLengthOutOfMaxRange", args{d: RequestStringLength{A: "test_not_success_too_long", B: ""}}, true},
 		{"TestBodyRequestStringLengthOutOfMinRange", args{d: RequestStringLength{A: "test_short", B: ""}}, true},
 		{"TestBodyRequestStringLengthWithoutValue", args{d: RequestStringLength{A: "", B: ""}}, false},
+		{"TestBodyRequestStringLengthWithPercentSign", args{d: RequestStringLength{A: "100%_short", B: ""}}, true},
 
 		{"TestBodyRequestPasswordSuccess", args{d: RequestPassword{A: "P@ssw0rdStrong", B: ""}}, false},
 		{"TestBodyRequestPasswordLowerThan8", args{d: RequestPassword{A: "week", B: ""}}, true},
@@ -70,6 +71,9 @@ func TestBodyRequest(t *testing.T) {
 		{"TestBodyRequestIntegerMaxSuccess", args{d: RequestNumberMax{5}}, false},
 		{"TestBodyRequestIntegerMinFailingRange", args{d: RequestNumberMin{2}}, true},
 		{"TestBodyRequestIntegerMaxFailingRange", args{d: RequestNumberMax{7}}, true},
+
+		{"TestBodyRequestNilInput", args{d: nil}, false},
+		{"TestBodyRequestNonStructInput", args{d: "not_a_struct"}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
