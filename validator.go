@@ -1,4 +1,3 @@
-```go
 package govalidate
 
 import (
@@ -245,5 +244,3 @@ func passwordMinimumReq(hasSpecial, hasDigit, hasUppercase, hasLowercase bool) b
 	}
 	return counter >= 3
 }
-
-```
