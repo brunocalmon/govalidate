@@ -1,3 +1,4 @@
+```go
 package govalidate
 
 import (
@@ -62,7 +63,7 @@ func (v stringValidator) validate(conditions []string, val interface{}) error {
 				password := val.(string)
 				matched, err := PasswordValidator(password)
 				if !matched || err != nil {
-					return errors.New("field [%s] should be a valid password between 8 to 72 characters which contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character")
+					return errors.New("field [%s] should be a valid password between 8 to 72 characters which contain at least 3 of the following: one lowercase letter, one uppercase letter, one numeric digit, and one special character")
 				}
 			}
 		case "gender":
@@ -100,12 +101,12 @@ func (v numberValidator) validate(conditions []string, val interface{}) error {
 
 			if constraints[0] == "min" {
 				if fieldVal < offset {
-					return errors.New(fmt.Sprintf("the field [%s] value [%d] has range shorter than required [%d]", "%s", fieldVal, offset))
+					return fmt.Errorf("the field [%%s] value [%d] has range shorter than required [%d]", fieldVal, offset)
 				}
 			}
 			if constraints[0] == "max" {
 				if fieldVal > offset {
-					return errors.New(fmt.Sprintf("the field [%s] value [%d] has range higher than required [%d]", "%s", fieldVal, offset))
+					return fmt.Errorf("the field [%%s] value [%d] has range higher than required [%d]", fieldVal, offset)
 				}
 			}
 		}
@@ -124,8 +125,15 @@ func getValidatorByType(fieldType string) validator {
 }
 
 func BodyRequest(d interface{}) []string {
+	if d == nil {
+		return nil
+	}
+
 	var fieldErrors []string
 	v := reflect.Indirect(reflect.ValueOf(d))
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
 
 	for i := 0; i < v.NumField(); i++ {
 		validate := v.Type().Field(i).Tag.Get("validate")
@@ -167,14 +175,16 @@ func validateMinMaxLength(condition string, val interface{}) error {
 				return errors.New("field [%s] validations malformed")
 			}
 
+			escapedFieldVal := strings.ReplaceAll(fieldVal, "%", "%%")
+
 			if constraints[0] == "min" {
 				if len(fieldVal) < offset {
-					return errors.New(fmt.Sprintf("the field [%s] value [%s] has length shorter than required [%d]", "%s", fieldVal, offset))
+					return fmt.Errorf("the field [%%s] value [%s] has length shorter than required [%d]", escapedFieldVal, offset)
 				}
 			}
 			if constraints[0] == "max" {
 				if len(fieldVal) > offset {
-					return errors.New(fmt.Sprintf("the field [%s] value [%s] has length higher than required [%d]", "%s", fieldVal, offset))
+					return fmt.Errorf("the field [%%s] value [%s] has length higher than required [%d]", escapedFieldVal, offset)
 				}
 			}
 		}
@@ -188,7 +198,7 @@ func PasswordValidator(password string) (bool, error) {
 		return false, errASCII
 	}
 	notASCII, errNotASCII := regexp.MatchString(notASCII, password)
-	if errASCII != nil {
+	if errNotASCII != nil {
 		return false, errNotASCII
 	}
 	hasSpecial, errSpecial := regexp.MatchString(specialCharacters, password)
@@ -235,3 +245,5 @@ func passwordMinimumReq(hasSpecial, hasDigit, hasUppercase, hasLowercase bool) b
 	}
 	return counter >= 3
 }
+
+```
